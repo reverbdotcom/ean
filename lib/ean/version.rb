@@ -1,9 +1,3 @@
-module EAN #:nodoc:
-  module VERSION #:nodoc:
-    MAJOR = 0
-    MINOR = 2
-    TINY  = 0
-
-    STRING = [MAJOR, MINOR, TINY].join('.')
-  end
+module EAN
+  VERSION = "1.0.0"
 end

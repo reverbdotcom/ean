@@ -7,15 +7,15 @@
 # GTIN-13
 
 # UPC-E
-# 12 numeric values, suppressed 0s 
+# 12 numeric values, suppressed 0s
 # GTIN-12
 
 # EAN-8
 # 8 numeric values
 
 module EAN
-  def generate_check_digit
-    numbers = self.to_s.gsub(/[\D]+/, "").split(//)
+  def self.generate_check_digit(string)
+    numbers = string.to_s.gsub(/[\D]+/, "").split(//)
 
     checksum = 0
     case numbers.length
@@ -34,8 +34,8 @@ module EAN
     return ((10 - checksum % 10)%10).to_s
   end
 
-  def ean?
-    numbers = self.to_s.gsub(/[\D]+/, "").split(//)
+  def self.ean?(string)
+    numbers = string.to_s.gsub(/[\D]+/, "").split(//)
 
     checksum = 0
     case numbers.length
@@ -54,24 +54,19 @@ module EAN
     return numbers[-1].to_i == (10 - checksum % 10)%10
   end
 
-  def to_gtin
-    numbers = self.to_s.gsub(/[\D]+/, "")
+  def self.to_gtin(string)
+    numbers = string.to_s.gsub(/[\D]+/, "")
     case numbers.length
     when 8
-      '000000'+numbers
+      "000000"+numbers
     when 12
-      '00'+numbers
+      "00"+numbers
     when 13
-      '0'+numbers
+      "0"+numbers
     when 14
       numbers
     else
-      '00000000000000'
+      "00000000000000"
     end
   end
-
-end
-
-class String
-  include EAN
 end
