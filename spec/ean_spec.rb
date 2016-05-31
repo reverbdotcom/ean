@@ -1,101 +1,96 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+require_relative "spec_helper"
+require_relative "support/sample_values"
 
 describe "EAN::Ean" do
-  include EAN::SpecHelpers
-  
-  before(:each) do
-  end
-  
-  after(:each) do
-  end
+  include SpecHelpers
 
   it "should generate for all zeros" do
-    '0-00000-00000'.generate_check_digit.should == '0'
+    EAN.generate_check_digit("0-00000-00000").should == "0"
   end
 
   it "should generate for single 1s" do
-    '1-00000-00000'.generate_check_digit.should == '7'
-    '0-10000-00000'.generate_check_digit.should == '9'
-    '0-01000-00000'.generate_check_digit.should == '7'
-    '0-00100-00000'.generate_check_digit.should == '9'
-    '0-00010-00000'.generate_check_digit.should == '7'
-    '0-00001-00000'.generate_check_digit.should == '9'
-    '0-00000-10000'.generate_check_digit.should == '7'
-    '0-00000-01000'.generate_check_digit.should == '9'
-    '0-00000-00100'.generate_check_digit.should == '7'
-    '0-00000-00010'.generate_check_digit.should == '9'
-    '0-00000-00001'.generate_check_digit.should == '7'
+    EAN.generate_check_digit("1-00000-00000").should == "7"
+    EAN.generate_check_digit("0-10000-00000").should == "9"
+    EAN.generate_check_digit("0-01000-00000").should == "7"
+    EAN.generate_check_digit("0-00100-00000").should == "9"
+    EAN.generate_check_digit("0-00010-00000").should == "7"
+    EAN.generate_check_digit("0-00001-00000").should == "9"
+    EAN.generate_check_digit("0-00000-10000").should == "7"
+    EAN.generate_check_digit("0-00000-01000").should == "9"
+    EAN.generate_check_digit("0-00000-00100").should == "7"
+    EAN.generate_check_digit("0-00000-00010").should == "9"
+    EAN.generate_check_digit("0-00000-00001").should == "7"
   end
 
   it "should generate for real numbers" do
-    samples_values.each do |value|
-      (value.chop+value.chop.generate_check_digit).should == value
+    sample_values.each do |value|
+      (value.chop + EAN.generate_check_digit(value.chop)).should == value
     end
   end
 
   it "should validate for GTIN-8" do
-    "1234555".generate_check_digit.should == "7"
+    EAN.generate_check_digit("1234555").should == "7"
   end
 
   it "should generate for GTIN-13" do
-    "123456789012".generate_check_digit.should == "8"
+    EAN.generate_check_digit("123456789012").should == "8"
   end
 
   it "should generate for GTIN-14" do
-    "1234567890123".generate_check_digit.should == "1"
+    EAN.generate_check_digit("1234567890123").should == "1"
   end
 
   it "should ignore non numbers" do
-    "7sdasdasda8sdsa47asdsa9asda4as0adsa0asda1adsa60asdasdas!${%^&*}2".ean?.should == true
+    EAN.ean?("7sdasdasda8sdsa47asdsa9asda4as0adsa0asda1adsa60asdasdas!${%^&*}2").should == true
   end
 
   it "should validate for all zeros" do
-    '0-00000-00000-0'.generate_check_digit.should == '0'
+    EAN.generate_check_digit("0-00000-00000-0").should == "0"
   end
 
   it "should validate for single 1s" do
-    '1-00000-00000-7'.ean?.should == true
-    '0-10000-00000-9'.ean?.should == true
-    '0-01000-00000-7'.ean?.should == true
-    '0-00100-00000-9'.ean?.should == true
-    '0-00010-00000-7'.ean?.should == true
-    '0-00001-00000-9'.ean?.should == true
-    '0-00000-10000-7'.ean?.should == true
-    '0-00000-01000-9'.ean?.should == true
-    '0-00000-00100-7'.ean?.should == true
-    '0-00000-00010-9'.ean?.should == true
-    '0-00000-00001-7'.ean?.should == true
+    EAN.ean?("1-00000-00000-7").should == true
+    EAN.ean?("0-10000-00000-9").should == true
+    EAN.ean?("0-01000-00000-7").should == true
+    EAN.ean?("0-00100-00000-9").should == true
+    EAN.ean?("0-00010-00000-7").should == true
+    EAN.ean?("0-00001-00000-9").should == true
+    EAN.ean?("0-00000-10000-7").should == true
+    EAN.ean?("0-00000-01000-9").should == true
+    EAN.ean?("0-00000-00100-7").should == true
+    EAN.ean?("0-00000-00010-9").should == true
+    EAN.ean?("0-00000-00001-7").should == true
   end
 
   it "should validate for real numbers" do
-    samples_values.each do |value|
-      value.ean?.should == true
+    sample_values.each do |value|
+      EAN.ean?(value).should == true
     end
   end
-  
+
   it "should validate for GTIN-8" do
-    "12345557".ean?.should == true
+    EAN.ean?("12345557").should == true
   end
 
   it "should validate for GTIN-13" do
-    "1234567890128".ean?.should == true
+    EAN.ean?("1234567890128").should == true
   end
 
   it "should validate for GTIN-14" do
-    "12345678901231".ean?.should == true
+    EAN.ean?("12345678901231").should == true
   end
 
   it "should convert all 4 cases to gtin" do
-    "12345557".to_gtin.should == "00000012345557"
-    "784794001602".to_gtin.should == "00784794001602"
-    "1234567890128".to_gtin.should == "01234567890128"
-    "12345678901231".to_gtin.should == "12345678901231"
+    EAN.to_gtin("12345557").should == "00000012345557"
+    EAN.to_gtin("784794001602").should == "00784794001602"
+    EAN.to_gtin("1234567890128").should == "01234567890128"
+    EAN.to_gtin("12345678901231").should == "12345678901231"
   end
 
   it "should validate converted gtin-14" do
-    "12345557".to_gtin.ean?.should == true
-    "784794001602".to_gtin.ean?.should == true
-    "1234567890128".to_gtin.ean?.should == true
-    "12345678901231".to_gtin.ean?.should == true
+    EAN.ean?(EAN.to_gtin("12345557")).should == true
+    EAN.ean?(EAN.to_gtin("784794001602")).should == true
+    EAN.ean?(EAN.to_gtin("1234567890128")).should == true
+    EAN.ean?(EAN.to_gtin("12345678901231")).should == true
   end
 end
